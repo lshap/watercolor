@@ -30,7 +30,7 @@ class ofApp : public ofBaseApp{
         void relaxDivergence();
         void flowOutward();
         void enforceBoundaryConditions();
-        float getMax(float items[][100]);
+        float getMax(float items[][101]);
     
         const int PAPER_WIDTH = 100;
         const int PAPER_HEIGHT = 100;
@@ -42,8 +42,8 @@ class ofApp : public ofBaseApp{
         float h[100][100];
     
         // staggered grid--size = (m-1)*(n-1)*4 - ((m-2)*(n-1) + (n-2)*(m-1)) + 2*m + 2*n
-        float u[100][100]; // x velocities
-        float v[100][100]; // y velocities
+        float u[101][101]; // x velocities
+        float v[101][101]; // y velocities
     
         float p[100][100]; // water pressure
         float g[10][100][100]; // shallow pigment 
