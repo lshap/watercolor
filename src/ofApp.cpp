@@ -32,7 +32,34 @@ void ofApp::initPaper(float paper[][100]) {
 }
 
 void ofApp::movePigment() {
-    
+    float maxVelocity = fmax(getMax(u), getMax(v));
+    float deltaT = 1.0/maxVelocity;
+    for (int k=0; k < NUM_PIGMENTS; k++) {
+        for (float t= 0; t < 1; t += deltaT) {
+            float g_temp[PAPER_WIDTH][PAPER_HEIGHT];
+            memcpy(g_temp, g[k], sizeof(float) * PAPER_WIDTH * PAPER_HEIGHT);
+            for (int i =0; i < PAPER_WIDTH; i++) {
+                for (int j =0; j < PAPER_HEIGHT; j++) {
+                    if (i < PAPER_WIDTH - 1) {
+                        g_temp[i+1][j] += fmax(0, u[i+1][j]*g[k][i][j]);
+                    }
+                    if (i > 0) {
+                        g_temp[i-1][j] += fmax(0, -u[i][j] * g[k][i][j]);
+                    }
+                    if (j < PAPER_HEIGHT - 1) {
+                        g_temp[i][j+1] += fmax(0, v[i][j+1] * g[k][i][j]);
+                    }
+                    if (j > 0) {
+                        g_temp[i][j-1] += fmax(0, -v[i][j] * g[k][i][j]);
+                    }
+                    
+                    g_temp[i][j] -= fmax(0, u[i+1][j] * g[k][i][j]) + fmax(0, -u[i][j] * g[k][i][j]) + fmax(0, v[i][j+1] * g[k][i][j]) + fmax(0, -v[i][j] * g[k][i][j]);
+                }
+            }
+            
+            memcpy(g[k], g_temp, sizeof(float) * PAPER_WIDTH * PAPER_HEIGHT);
+        }
+    }
 }
 
 void ofApp::transferPigment() {
@@ -54,7 +81,7 @@ float ofApp::getMax(float items[][101]) {
 void ofApp::enforceBoundaryConditions() {
     for (int i = 0; i < PAPER_WIDTH - 1; i++) {
         for (int j = 0; j < PAPER_HEIGHT - 1; j++) {
-            if (M[i][j]  == 0) {
+            if (M(i, j)  == 0) {
                 u[i][j] = 0;
                 u[i + 1][j] = 0;
                 v[i][j] = 0;
@@ -153,12 +180,18 @@ void ofApp::relaxDivergence() {
     } while (d_max > tolerance && t < MAX_ITER);
 }
 
+float** ofApp::getGaussian(int width, int height, int K) {
+    
+}
+
 void ofApp::flowOutward() {
 
 }
 
 void ofApp::moveWater() {
-
+    updateVelocities();
+    relaxDivergence();
+    flowOutward();
 }
 
 //----------------END WATERCOLOR METHODS------------------------

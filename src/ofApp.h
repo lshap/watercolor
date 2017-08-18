@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxMatrixEigen.h"
+
 
 class ofApp : public ofBaseApp{
 
@@ -31,14 +33,16 @@ class ofApp : public ofBaseApp{
         void flowOutward();
         void enforceBoundaryConditions();
         float getMax(float items[][101]);
+        float** getGaussian(int width, int height, int K);
     
         const int PAPER_WIDTH = 100;
         const int PAPER_HEIGHT = 100;
+        const int NUM_PIGMENTS = 10;
     
         const float VISCOSITY = 0.1;
         const float VISCOUS_DRAG = 0.01;
     
-        int M[100][100]; // wet area mask
+        Eigen::Matrix<int, 100, 100> M;
         float h[100][100];
     
         // staggered grid--size = (m-1)*(n-1)*4 - ((m-2)*(n-1) + (n-2)*(m-1)) + 2*m + 2*n
